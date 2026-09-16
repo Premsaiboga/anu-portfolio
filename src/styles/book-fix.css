@@ -1,13 +1,3 @@
 .book-spread {
   grid-template-columns: 1fr 1fr;
 }
-
-.book-page,
-.turning-page {
-  will-change: transform;
-}
-
-.turning-page img {
-  will-change: transform;
-  backface-visibility: hidden;
-}

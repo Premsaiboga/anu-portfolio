@@ -152,14 +152,6 @@ function ProjectBook({ project, onClose }: { project: Project; onClose: () => vo
 
   const pageSrc = (n: number) => `/assets/pages/page-${String(n).padStart(2, '0')}.webp`
 
-  useEffect(() => {
-    pageNumbers.forEach((pageNumber) => {
-      const image = new Image()
-      image.decoding = 'async'
-      image.src = pageSrc(pageNumber)
-    })
-  }, [pageNumbers])
-
   return <motion.div className="book-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
     <motion.div className="book-viewer" initial={{ opacity: 0, scale: .97, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: .97, y: 20 }} transition={{ duration: .35 }} onClick={(e) => e.stopPropagation()}>
       <aside className="book-sidebar">
