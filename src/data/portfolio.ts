@@ -86,7 +86,7 @@ export const projects: Project[] = [
     description: 'During my internship, I had the chance to work on real design projects that helped me connect classroom learning with professional practice. I was involved in planning spaces, preparing drawings and exploring interior details. The work includes residential and semi-public spaces, with a focus on layouts, furniture and customized interiors.',
     quote: 'Learning by doing, designing with purpose.',
     hero: key('p37-1'), pages: [34,35,36,37,38,39,40,41,42,43,44,45],
-    gallery: [key('p37-1'), page(36), key('p38-1'), key('p38-2'), key('p39-1'), key('p39-2'), page(40), key('p41-1'), key('p41-2'), page(42), key('p43-1'), key('p43-2'), page(44), key('p45-1'), key('p45-2')],
+    gallery: [page(34), page(35), page(36), key('p37-1'), key('p38-1'), key('p38-2'), key('p39-1'), key('p39-2'), page(40), key('p41-1'), key('p41-2'), page(42), key('p43-1'), key('p43-2'), page(44), key('p45-1'), key('p45-2')],
   },
 ]
 
