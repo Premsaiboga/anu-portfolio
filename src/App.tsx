@@ -1,0 +1,202 @@
+import { useEffect, useMemo, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Download, ExternalLink, Mail, Menu, Phone, X, ZoomIn, Maximize2, Grid2X2 } from 'lucide-react'
+import { education, experience, interests, languages, miscellaneous, otherSkills, profile, projects, softwareSkills, type Project } from './data/portfolio'
+
+type Section = 'home' | 'about' | 'work' | 'skills' | 'contact'
+
+function App() {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [activeProject, setActiveProject] = useState<Project | null>(null)
+  const [activeSection, setActiveSection] = useState<Section>('home')
+
+  useEffect(() => {
+    const ids: Section[] = ['home', 'about', 'work', 'skills', 'contact']
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+      if (visible) setActiveSection(visible.target.id as Section)
+    }, { rootMargin: '-35% 0px -55% 0px', threshold: [0.1, 0.25, 0.5] })
+    ids.forEach((id) => document.getElementById(id) && observer.observe(document.getElementById(id)!))
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    document.body.style.overflow = activeProject ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [activeProject])
+
+  const navItems = useMemo(() => [
+    ['home', 'Home'], ['about', 'About'], ['work', 'Selected Work'], ['skills', 'Profile'], ['contact', 'Contact'],
+  ] as const, [])
+
+  const scrollTo = (id: string) => {
+    setMenuOpen(false)
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  return (
+    <div className="site-shell">
+      <header className="topbar">
+        <button className="wordmark" onClick={() => scrollTo('home')} aria-label="Back to home">P. ANUSRI<span>.</span><small>ARCHITECTURAL PORTFOLIO</small></button>
+        <nav className="desktop-nav" aria-label="Primary navigation">
+          {navItems.map(([id, label]) => <button key={id} className={activeSection === id ? 'active' : ''} onClick={() => scrollTo(id)}>{label}</button>)}
+        </nav>
+        <div className="top-actions">
+          <a className="resume-btn" href="/assets/portfolio-landscape.pdf" download="Pasikanti-Anusri-Architectural-Portfolio-Landscape.pdf">Download Portfolio <Download size={15} /></a>
+          <button className="menu-btn" onClick={() => setMenuOpen((v) => !v)} aria-label="Toggle menu">{menuOpen ? <X /> : <Menu />}</button>
+        </div>
+      </header>
+
+      <AnimatePresence>
+        {menuOpen && <motion.div className="mobile-menu" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+          {navItems.map(([id, label]) => <button key={id} onClick={() => scrollTo(id)}>{label}</button>)}
+          <a href="/assets/portfolio-landscape.pdf" download="Pasikanti-Anusri-Architectural-Portfolio-Landscape.pdf" onClick={() => setMenuOpen(false)}>Download landscape portfolio <Download size={16} /></a>
+        </motion.div>}
+      </AnimatePresence>
+
+      <main>
+        <section id="home" className="hero section-pad">
+          <div className="hero-copy">
+            <p className="eyebrow">Architectural Portfolio / 2021—2026</p>
+            <h1>Pasikanti<br /><em>Anusri</em></h1>
+            <p className="hero-role">Fresher Architect</p>
+            <p className="hero-intro">Exploring how simple ideas, materials, light and nature can come together to create comfortable and meaningful spaces.</p>
+            <div className="hero-actions">
+              <button className="primary-btn" onClick={() => scrollTo('work')}>Explore selected work <ArrowDown size={16} /></button>
+              <button className="text-btn" onClick={() => scrollTo('contact')}>Get in touch <ArrowUpRight size={16} /></button>
+            </div>
+          </div>
+          <div className="hero-visual">
+            <div className="hero-frame"><img src={profile.profileImage} alt="Pasikanti Anusri" /><div className="frame-note">01 / 05<br /><span>PORTRAIT</span></div></div>
+            <div className="hero-side-label">ARCHITECTURE<br />DESIGN<br />VISUALIZATION</div>
+          </div>
+          <div className="hero-footer"><span>Hyderabad / Telangana</span><span>Scroll to explore</span></div>
+        </section>
+
+        <section id="about" className="about section-pad section-light">
+          <div className="section-heading"><span>01</span><h2>About</h2></div>
+          <div className="about-grid">
+            <div className="about-photo"><img src={profile.portraitImage} alt="Portrait of Pasikanti Anusri" /></div>
+            <div className="about-copy"><p className="large-copy">A fresher in architecture, ready to begin a professional journey through real projects, collaboration and continuous learning.</p><p>{profile.intro}</p><p>{profile.background}</p><p>{profile.outlook}</p><div className="mini-facts"><div><span>Born</span><strong>{profile.birthDate}</strong></div><div><span>From</span><strong>{profile.birthplace}</strong></div><div><span>Focus</span><strong>Architecture + Interiors</strong></div></div></div>
+          </div>
+        </section>
+
+        <section id="work" className="work section-pad">
+          <div className="section-heading"><span>02</span><h2>Selected work</h2><p>Open a project as a landscape architectural book. Turn through the original portfolio pages.</p></div>
+          <div className="project-list">{projects.map((project, index) => <ProjectCard key={project.id} project={project} index={index} onOpen={() => setActiveProject(project)} />)}</div>
+        </section>
+
+        <section id="skills" className="profile section-pad section-dark">
+          <div className="section-heading"><span>03</span><h2>Profile</h2></div>
+          <div className="profile-grid">
+            <div><p className="kicker">Education</p><div className="timeline">{education.map((item) => <div className="timeline-item" key={item.qualification}><span>{item.period}</span><div><h3>{item.qualification}</h3><p>{item.institution}</p></div></div>)}</div></div>
+            <div><p className="kicker">Experience</p><div className="timeline">{experience.map((item) => <div className="timeline-item" key={`${item.company}-${item.date}`}><span>{item.date}</span><div><h3>{item.role}</h3><p>{item.company}</p></div></div>)}</div></div>
+          </div>
+          <div className="skill-columns"><SkillGroup title="Software" items={softwareSkills} /><SkillGroup title="Other skills" items={otherSkills} /><SkillGroup title="Languages" items={languages.map((l) => l.note ? `${l.name} — ${l.note}` : l.name)} /><SkillGroup title="Interests" items={interests} /></div>
+        </section>
+
+        <section className="archive section-pad section-light">
+          <div className="section-heading"><span>04</span><h2>Beyond the drawing board</h2><p>Travel photographs and architectural models included in the original portfolio.</p></div>
+          <div className="archive-grid">{miscellaneous.travel.map((src, i) => <figure key={src}><img loading="lazy" src={src} alt={`Travel photograph ${i + 1}`} /></figure>)}</div>
+          <div className="archive-split"><div><p className="kicker">Architectural models</p><div className="model-grid">{miscellaneous.models.map((src, i) => <img loading="lazy" key={src} src={src} alt={`Architectural model ${i + 1}`} />)}</div></div><div className="archive-note"><p className="large-copy">“Models and photographs that reflect who I am outside the drawing board.”</p><p>Selected directly from the portfolio's miscellaneous section.</p></div></div>
+        </section>
+
+        <section id="contact" className="contact section-pad section-dark">
+          <div className="contact-grid"><div><p className="eyebrow">05 / Contact</p><h2>Let’s build<br /><em>something meaningful.</em></h2><p className="contact-copy">Available to begin a professional journey, learn through real projects and contribute to thoughtful architectural work.</p></div><div className="contact-card"><a href={`mailto:${profile.email}`}><Mail size={18} /><span>{profile.email}</span></a><a href={`tel:${profile.phone}`}><Phone size={18} /><span>{profile.phone}</span></a><div className="contact-meta"><span>Based in</span><strong>Hyderabad, Telangana</strong></div><a className="primary-btn full" href="/assets/portfolio-landscape.pdf" download="Pasikanti-Anusri-Architectural-Portfolio-Landscape.pdf">Download landscape portfolio <Download size={16} /></a></div></div>
+          <footer><span>© {new Date().getFullYear()} Pasikanti Anusri</span><span>Architectural Portfolio / 2021—2026</span></footer>
+        </section>
+      </main>
+
+      <AnimatePresence>{activeProject && <ProjectBook project={activeProject} onClose={() => setActiveProject(null)} />}</AnimatePresence>
+    </div>
+  )
+}
+
+function ProjectCard({ project, index, onOpen }: { project: Project; index: number; onOpen: () => void }) {
+  return <motion.article className="project-card" initial={{ opacity: 0, y: 35 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: .65, delay: index * .04 }}>
+    <button className="project-image" onClick={onOpen} aria-label={`Open ${project.title} as a book`}><img loading={index > 1 ? 'lazy' : 'eager'} src={project.hero} alt={`${project.title} project`} /><span className="project-number">{project.number}</span><span className="open-icon"><ArrowUpRight /></span></button>
+    <div className="project-info"><div><p className="kicker">{project.category} / {project.location}</p><h3>{project.title}</h3></div><p>{project.description}</p><button className="text-btn" onClick={onOpen}>View project as book <ArrowUpRight size={15} /></button></div>
+  </motion.article>
+}
+
+function SkillGroup({ title, items }: { title: string; items: string[] }) {
+  return <div className="skill-group"><p className="kicker">{title}</p><ul>{items.map((item) => <li key={item}>{item}</li>)}</ul></div>
+}
+
+function ProjectBook({ project, onClose }: { project: Project; onClose: () => void }) {
+  const [spread, setSpread] = useState(0)
+  const [direction, setDirection] = useState<'next' | 'prev'>('next')
+  const [zoom, setZoom] = useState(false)
+  const [showThumbs, setShowThumbs] = useState(true)
+  const pageNumbers = project.pages
+  const totalSpreads = Math.ceil(pageNumbers.length / 2)
+  const leftPage = pageNumbers[spread * 2]
+  const rightPage = pageNumbers[spread * 2 + 1]
+  const previousRight = pageNumbers[spread * 2 - 1]
+  const previousLeft = pageNumbers[spread * 2 - 2]
+
+  const turn = (next: boolean) => {
+    setDirection(next ? 'next' : 'prev')
+    setSpread((value) => Math.min(Math.max(value + (next ? 1 : -1), 0), totalSpreads - 1))
+  }
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose()
+      if (event.key === 'ArrowRight') turn(true)
+      if (event.key === 'ArrowLeft') turn(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  })
+
+  const pageSrc = (n: number) => `/assets/pages/page-${String(n).padStart(2, '0')}.webp`
+
+  return <motion.div className="book-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
+    <motion.div className="book-viewer" initial={{ opacity: 0, scale: .97, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: .97, y: 20 }} transition={{ duration: .35 }} onClick={(e) => e.stopPropagation()}>
+      <aside className="book-sidebar">
+        <button className="back-projects" onClick={onClose}><ArrowLeft size={15} /> Back to Projects</button>
+        <div className="book-counter"><strong>{project.number}</strong><span>/ 04</span></div>
+        <h2>{project.title}</h2>
+        <div className="book-tags"><span>{project.category}</span><span>Academic</span></div>
+        <div className="book-facts"><div><span>Location</span><strong>{project.location}</strong></div><div><span>Project</span><strong>{project.academic.replace('Academic Project — ', '')}</strong></div><div><span>Software</span><strong>{project.software.join(', ')}</strong></div></div>
+        <p className="book-description">{project.description}</p>
+        {project.quote && <blockquote>“{project.quote}”</blockquote>}
+        <a className="sidebar-download" href="/assets/portfolio-landscape.pdf" download="Pasikanti-Anusri-Architectural-Portfolio-Landscape.pdf"><Download size={15} /> Download landscape PDF</a>
+      </aside>
+
+      <section className="book-stage">
+        <div className="book-toolbar">
+          <span>Original portfolio pages · {spread * 2 + 1}–{Math.min(spread * 2 + 2, pageNumbers.length)} / {pageNumbers.length}</span>
+          <div className="book-tools"><button onClick={() => setZoom((v) => !v)} aria-label="Toggle zoom"><ZoomIn size={17} /></button><button onClick={() => document.documentElement.requestFullscreen?.()} aria-label="Fullscreen"><Maximize2 size={17} /></button><button onClick={() => setShowThumbs((v) => !v)} aria-label="Toggle thumbnails"><Grid2X2 size={17} /></button></div>
+        </div>
+
+        <div className={`book ${zoom ? 'book-zoom' : ''}`}>
+          <button className="book-arrow left" onClick={() => turn(false)} disabled={spread === 0} aria-label="Previous pages"><ArrowLeft /></button>
+          <div className="book-spread">
+            <div className="book-page left-page"><img src={pageSrc(leftPage)} alt={`${project.title}, portfolio page ${leftPage}`} /></div>
+            <div className="book-gutter" />
+            <div className="book-page right-page"><img src={rightPage ? pageSrc(rightPage) : pageSrc(leftPage)} alt={`${project.title}, portfolio page ${rightPage ?? leftPage}`} /></div>
+            <AnimatePresence initial={false} mode="sync">
+              {direction === 'next' && spread > 0 && <motion.div key={`next-${spread}`} className="turning-page turn-next" initial={{ rotateY: 0 }} animate={{ rotateY: -180 }} transition={{ duration: .85, ease: [0.22, 0.61, 0.36, 1] }}><img src={pageSrc(previousRight)} alt="Turning portfolio page" /></motion.div>}
+              {direction === 'prev' && spread < totalSpreads - 1 && <motion.div key={`prev-${spread}`} className="turning-page turn-prev" initial={{ rotateY: 0 }} animate={{ rotateY: 180 }} transition={{ duration: .85, ease: [0.22, 0.61, 0.36, 1] }}><img src={pageSrc(pageNumbers[spread * 2 + 2])} alt="Turning portfolio page" /></motion.div>}
+            </AnimatePresence>
+          </div>
+          <button className="book-arrow right" onClick={() => turn(true)} disabled={spread === totalSpreads - 1} aria-label="Next pages"><ArrowRight /></button>
+        </div>
+
+        <div className="book-hint">Click the arrows or use ← → to turn pages</div>
+
+        {showThumbs && <div className="book-thumbnails" aria-label="Portfolio pages">
+          {pageNumbers.map((pageNumber, index) => <button key={pageNumber} className={Math.floor(index / 2) === spread ? 'selected' : ''} onClick={() => { setDirection(index / 2 >= spread ? 'next' : 'prev'); setSpread(Math.floor(index / 2)) }}><img loading="lazy" src={pageSrc(pageNumber)} alt={`Page ${pageNumber}`} /><span>{String(pageNumber).padStart(2, '0')}</span></button>)}
+        </div>}
+
+        <div className="book-footer-controls"><button onClick={() => turn(false)} disabled={spread === 0}><ArrowLeft size={16} /> Previous</button><span>{leftPage} — {rightPage ?? leftPage}</span><button onClick={() => turn(true)} disabled={spread === totalSpreads - 1}>Next <ArrowRight size={16} /></button></div>
+      </section>
+
+      <button className="book-close" onClick={onClose} aria-label="Close book"><X /></button>
+    </motion.div>
+  </motion.div>
+}
+
+export default App
