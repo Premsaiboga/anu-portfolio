@@ -152,6 +152,14 @@ function ProjectBook({ project, onClose }: { project: Project; onClose: () => vo
 
   const pageSrc = (n: number) => `/assets/pages/page-${String(n).padStart(2, '0')}.webp`
 
+  useEffect(() => {
+    pageNumbers.forEach((pageNumber) => {
+      const image = new Image()
+      image.decoding = 'async'
+      image.src = pageSrc(pageNumber)
+    })
+  }, [pageNumbers])
+
   return <motion.div className="book-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
     <motion.div className="book-viewer" initial={{ opacity: 0, scale: .97, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: .97, y: 20 }} transition={{ duration: .35 }} onClick={(e) => e.stopPropagation()}>
       <aside className="book-sidebar">
@@ -175,7 +183,6 @@ function ProjectBook({ project, onClose }: { project: Project; onClose: () => vo
           <button className="book-arrow left" onClick={() => turn(false)} disabled={spread === 0} aria-label="Previous pages"><ArrowLeft /></button>
           <div className="book-spread">
             <div className="book-page left-page"><img src={pageSrc(leftPage)} alt={`${project.title}, portfolio page ${leftPage}`} /></div>
-            <div className="book-gutter" />
             <div className="book-page right-page"><img src={rightPage ? pageSrc(rightPage) : pageSrc(leftPage)} alt={`${project.title}, portfolio page ${rightPage ?? leftPage}`} /></div>
             <AnimatePresence initial={false} mode="sync">
               {direction === 'next' && spread > 0 && <motion.div key={`next-${spread}`} className="turning-page turn-next" initial={{ rotateY: 0 }} animate={{ rotateY: -180 }} transition={{ duration: .85, ease: [0.22, 0.61, 0.36, 1] }}><img src={pageSrc(previousRight)} alt="Turning portfolio page" /></motion.div>}
