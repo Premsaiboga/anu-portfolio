@@ -70,7 +70,7 @@ export const projects: Project[] = [
     description: 'A complete set of working drawings prepared for apartment design. The drawings cover floor plans, elevations and sections, together with brick masonry details, slab layouts, sanitary and plumbing systems, foundation plans, electrical layouts and other service drawings. The set explores how design concepts translate into precise, buildable instructions.',
     quote: 'Bridging the gap between ideas and construction.',
     hero: key('p15-1'), pages: [14,15,16,17,18,19,20,21],
-    gallery: [key('p15-1'), page(16), page(17), page(18), page(19), page(20), page(21)],
+    gallery: [page(14), page(15), page(16), page(17), page(18), page(19), page(20), page(21)],
   },
   {
     id: 'nift-campus', number: '03', title: 'NIFT Campus', category: 'Public / Semi-Public', location: 'Nava Raipur, Chhattisgarh', academic: 'Academic Project — Semester 10, SVCA',
