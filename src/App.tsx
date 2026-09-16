@@ -170,7 +170,6 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
   return <motion.div className="modal-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
     <motion.div className="project-modal" initial={{ opacity: 0, y: 35 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 35 }} transition={{ duration: .35 }} onClick={(e) => e.stopPropagation()}>
       <button className="modal-close" onClick={onClose} aria-label="Close project"><X /></button>
-      <div className="modal-header"><span>{project.number} / {project.category}</span><h2>{project.title}</h2><p>{project.description}</p><div className="modal-meta"><span>{project.location}</span><span>{project.academic}</span><span>{project.software.join(' · ')}</span></div>{project.quote && <blockquote>“{project.quote}”</blockquote>}</div>
       <div className="book-viewer" aria-label={`${project.title} portfolio viewer`}>
         <button className="book-arrow book-arrow-left" onClick={() => turnPage(Math.max(0, spread - 1))} disabled={spread === 0} aria-label="Previous spread"><ArrowLeft /></button>
         <div className="book-stage">
@@ -184,6 +183,7 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
         <button className="book-arrow book-arrow-right" onClick={() => turnPage(Math.min(totalSpreads - 1, spread + 1))} disabled={spread === totalSpreads - 1} aria-label="Next spread"><ArrowRight /></button>
       </div>
       <div className="book-controls"><span>Spread {String(spread + 1).padStart(2, '0')} / {String(totalSpreads).padStart(2, '0')}</span><span>Pages {spread * 2 + 1}–{Math.min(spread * 2 + 2, project.gallery.length)} of {project.gallery.length}</span></div>
+      <div className="modal-header"><span>{project.number} / {project.category}</span><h2>{project.title}</h2><p>{project.description}</p><div className="modal-meta"><span>{project.location}</span><span>{project.academic}</span><span>{project.software.join(' · ')}</span></div>{project.quote && <blockquote>“{project.quote}”</blockquote>}</div>
     </motion.div>
   </motion.div>
 }
