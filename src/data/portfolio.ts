@@ -92,7 +92,7 @@ export const projects: Project[] = [
 
 export const miscellaneous = {
   plans: [page(46), page(47), page(48), page(49)],
-  travel: [key('p52-1'), key('p52-2'), key('p52-3')],
+  travel: [key('p52-1'), key('p52-2'), key('p52-3'), key('p27-4')],
   models: [key('p53-1'), key('p53-2')],
   boards: [page(50), page(51)],
 }
