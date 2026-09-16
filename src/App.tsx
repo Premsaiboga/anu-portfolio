@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowDown, ArrowUpRight, Download, Mail, Menu, Phone, X } from 'lucide-react'
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Download, Mail, Menu, Phone, X } from 'lucide-react'
 import { education, experience, interests, languages, miscellaneous, otherSkills, profile, projects, softwareSkills, type Project } from './data/portfolio'
 
 type Section = 'home' | 'about' | 'work' | 'skills' | 'contact'
@@ -156,11 +156,34 @@ function SkillGroup({ title, items }: { title: string; items: string[] }) {
 }
 
 function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) {
+  const [spread, setSpread] = useState(0)
+  const [direction, setDirection] = useState(1)
+  const totalSpreads = Math.ceil(project.gallery.length / 2)
+  const leftPage = project.gallery[spread * 2]
+  const rightPage = project.gallery[spread * 2 + 1]
+
+  const turnPage = (nextSpread: number) => {
+    setDirection(nextSpread > spread ? 1 : -1)
+    setSpread(nextSpread)
+  }
+
   return <motion.div className="modal-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
     <motion.div className="project-modal" initial={{ opacity: 0, y: 35 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 35 }} transition={{ duration: .35 }} onClick={(e) => e.stopPropagation()}>
       <button className="modal-close" onClick={onClose} aria-label="Close project"><X /></button>
       <div className="modal-header"><span>{project.number} / {project.category}</span><h2>{project.title}</h2><p>{project.description}</p><div className="modal-meta"><span>{project.location}</span><span>{project.academic}</span><span>{project.software.join(' · ')}</span></div>{project.quote && <blockquote>“{project.quote}”</blockquote>}</div>
-      <div className="modal-gallery">{project.gallery.map((src, i) => <img key={`${src}-${i}`} loading={i > 1 ? 'lazy' : 'eager'} src={src} alt={`${project.title} portfolio page ${i + 1}`} />)}</div>
+      <div className="book-viewer" aria-label={`${project.title} portfolio viewer`}>
+        <button className="book-arrow book-arrow-left" onClick={() => turnPage(Math.max(0, spread - 1))} disabled={spread === 0} aria-label="Previous spread"><ArrowLeft /></button>
+        <div className="book-stage">
+          <AnimatePresence initial={false} mode="wait">
+            <motion.div key={spread} className="book-spread" initial={{ opacity: 0, rotateY: direction > 0 ? 8 : -8, x: direction > 0 ? 24 : -24 }} animate={{ opacity: 1, rotateY: 0, x: 0 }} exit={{ opacity: 0, rotateY: direction > 0 ? -8 : 8, x: direction > 0 ? -24 : 24 }} transition={{ duration: .55, ease: [0.22, 1, .36, 1] }}>
+              <img loading="eager" src={leftPage} alt={`${project.title} portfolio page ${spread * 2 + 1}`} />
+              {rightPage && <img loading="eager" src={rightPage} alt={`${project.title} portfolio page ${spread * 2 + 2}`} />}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+        <button className="book-arrow book-arrow-right" onClick={() => turnPage(Math.min(totalSpreads - 1, spread + 1))} disabled={spread === totalSpreads - 1} aria-label="Next spread"><ArrowRight /></button>
+      </div>
+      <div className="book-controls"><span>Spread {String(spread + 1).padStart(2, '0')} / {String(totalSpreads).padStart(2, '0')}</span><span>Pages {spread * 2 + 1}–{Math.min(spread * 2 + 2, project.gallery.length)} of {project.gallery.length}</span></div>
     </motion.div>
   </motion.div>
 }
