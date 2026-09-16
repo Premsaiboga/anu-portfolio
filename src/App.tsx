@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowDown, ArrowUpRight, Download, ExternalLink, Instagram, Mail, Menu, Phone, X } from 'lucide-react'
+import { ArrowDown, ArrowUpRight, Download, Mail, Menu, Phone, X } from 'lucide-react'
 import { education, experience, interests, languages, miscellaneous, otherSkills, profile, projects, softwareSkills, type Project } from './data/portfolio'
 
 type Section = 'home' | 'about' | 'work' | 'skills' | 'contact'
