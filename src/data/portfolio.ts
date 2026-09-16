@@ -78,7 +78,7 @@ export const projects: Project[] = [
     description: 'A proposed campus for the National Institute of Fashion Technology (NIFT) at Nava Raipur, Chhattisgarh. The design brings together academic, administrative and residential spaces within a connected campus environment. Interconnected built forms, courtyards and landscaped open spaces encourage interaction, informal learning and a strong connection with nature.',
     quote: 'Shaping spaces for learning, interaction, and creativity.',
     hero: key('p23-1'), pages: [22,23,24,25,26,27,28,29,30,31,32,33],
-    gallery: [key('p23-1'), page(24), page(25), page(26), page(27), page(28), page(29), page(30), page(31), page(32), page(33)],
+    gallery: [page(22), key('p23-1'), page(24), page(25), page(26), page(27), page(28), page(29), page(30), page(31), page(32), page(33)],
   },
   {
     id: 'internship-works', number: '04', title: 'Internship Works', category: 'Residential / Semi-Public', location: 'Hyderabad', academic: 'Portfolio Section — Internship Work',
