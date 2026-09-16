@@ -128,6 +128,7 @@ function ProjectBook({ project, onClose }: { project: Project; onClose: () => vo
   const [direction, setDirection] = useState<'next' | 'prev'>('next')
   const [zoom, setZoom] = useState(false)
   const [showThumbs, setShowThumbs] = useState(true)
+  const [isTurning, setIsTurning] = useState(false)
   const pageNumbers = project.pages
   const totalSpreads = Math.ceil(pageNumbers.length / 2)
   const leftPage = pageNumbers[spread * 2]
@@ -136,8 +137,10 @@ function ProjectBook({ project, onClose }: { project: Project; onClose: () => vo
   const previousLeft = pageNumbers[spread * 2 - 2]
 
   const turn = (next: boolean) => {
+    if (isTurning) return
     setDirection(next ? 'next' : 'prev')
     setSpread((value) => Math.min(Math.max(value + (next ? 1 : -1), 0), totalSpreads - 1))
+    setIsTurning(true)
   }
 
   useEffect(() => {
@@ -172,16 +175,17 @@ function ProjectBook({ project, onClose }: { project: Project; onClose: () => vo
         </div>
 
         <div className={`book ${zoom ? 'book-zoom' : ''}`}>
-          <button className="book-arrow left" onClick={() => turn(false)} disabled={spread === 0} aria-label="Previous pages"><ArrowLeft /></button>
+          <button className="book-arrow left" onClick={() => turn(false)} disabled={spread === 0 || isTurning} aria-label="Previous pages"><ArrowLeft /></button>
           <div className="book-spread">
             <div className="book-page left-page"><img src={pageSrc(leftPage)} alt={`${project.title}, portfolio page ${leftPage}`} /></div>
             <div className="book-page right-page"><img src={rightPage ? pageSrc(rightPage) : pageSrc(leftPage)} alt={`${project.title}, portfolio page ${rightPage ?? leftPage}`} /></div>
             <AnimatePresence initial={false} mode="sync">
-              {direction === 'next' && spread > 0 && <motion.div key={`next-${spread}`} className="turning-page turn-next" initial={{ rotateY: 0 }} animate={{ rotateY: -180 }} transition={{ duration: .85, ease: [0.22, 0.61, 0.36, 1] }}><img src={pageSrc(previousRight)} alt="Turning portfolio page" /></motion.div>}
-              {direction === 'prev' && spread < totalSpreads - 1 && <motion.div key={`prev-${spread}`} className="turning-page turn-prev" initial={{ rotateY: 0 }} animate={{ rotateY: 180 }} transition={{ duration: .85, ease: [0.22, 0.61, 0.36, 1] }}><img src={pageSrc(pageNumbers[spread * 2 + 2])} alt="Turning portfolio page" /></motion.div>}
+              {isTurning && <div className="turning-cover left-page"><img src={pageSrc(direction === 'next' ? previousLeft : pageNumbers[spread * 2 + 2])} alt="Current left portfolio page" /></div>}
+              {direction === 'next' && spread > 0 && <motion.div key={`next-${spread}`} className="turning-page turn-next" initial={{ rotateY: 0 }} animate={{ rotateY: -180 }} onAnimationComplete={() => setIsTurning(false)} transition={{ duration: .85, ease: [0.22, 0.61, 0.36, 1] }}><img src={pageSrc(previousRight)} alt="Turning portfolio page" /></motion.div>}
+              {direction === 'prev' && spread < totalSpreads - 1 && <motion.div key={`prev-${spread}`} className="turning-page turn-prev" initial={{ rotateY: 0 }} animate={{ rotateY: 180 }} onAnimationComplete={() => setIsTurning(false)} transition={{ duration: .85, ease: [0.22, 0.61, 0.36, 1] }}><img src={pageSrc(pageNumbers[spread * 2 + 2])} alt="Turning portfolio page" /></motion.div>}
             </AnimatePresence>
           </div>
-          <button className="book-arrow right" onClick={() => turn(true)} disabled={spread === totalSpreads - 1} aria-label="Next pages"><ArrowRight /></button>
+          <button className="book-arrow right" onClick={() => turn(true)} disabled={spread === totalSpreads - 1 || isTurning} aria-label="Next pages"><ArrowRight /></button>
         </div>
 
         <div className="book-hint">Click the arrows or use ← → to turn pages</div>
