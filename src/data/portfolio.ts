@@ -23,7 +23,7 @@ export const profile = {
   birthDate: 'February 17, 2003',
   birthplace: 'Mancherial, Telangana',
   phone: '9701241541',
-  email: 'anusri.netha@gmail.com',
+  email: 'anusrinetha@gmail.com',
   profileImage: '/assets/profile/anusri-profile.jpg',
   portraitImage: '/assets/profile/anusri-portrait.jpg',
   intro:
