@@ -50,7 +50,7 @@ export const languages = [
 export const interests = ['Music', 'Photography', 'Dance', 'Yoga', 'Travel']
 
 export const experience = [
-  { date: 'March 2021 – Aug 2026', role: 'Intern in Diploma', company: 'SNS Architects' },
+  { date: 'March 2021 – Aug 2021', role: 'Intern in Diploma', company: 'SNS Architects' },
   { date: 'Sep 2025 – Jan 2026', role: 'Intern in Bachelors', company: 'Linear Architects' },
   { date: 'March 2026', role: 'Junior Architect', company: 'Linear Architects' },
 ]
